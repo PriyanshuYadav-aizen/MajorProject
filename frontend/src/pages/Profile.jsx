@@ -12,10 +12,6 @@ const Profile = () => {
   const [success, setSuccess] = useState('');
   const [activeModal, setActiveModal] = useState(null);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   const fetchProfile = async () => {
     try {
       setLoading(true);
@@ -49,6 +45,12 @@ const Profile = () => {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    // The initial request synchronizes component state with the API.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchProfile();
+  }, []);
 
   if (loading) {
     return (

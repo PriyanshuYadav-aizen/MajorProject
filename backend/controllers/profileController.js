@@ -1,8 +1,13 @@
 // backend/controllers/profileController.js
 import User from '../models/User.js';
+import { isDemoMode, updateDemoUser } from '../data/demoData.js';
 
 export const getProfile = async (req, res) => {
   try {
+    if (isDemoMode()) {
+      return res.json(req.user);
+    }
+
     const user = await User.findById(req.user._id).select('-password');
     res.json(user);
   } catch (error) {
@@ -13,6 +18,10 @@ export const getProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { profile, healthProfile } = req.body;
+
+    if (isDemoMode()) {
+      return res.json(updateDemoUser({ profile, healthProfile }));
+    }
     
     const user = await User.findById(req.user._id);
     

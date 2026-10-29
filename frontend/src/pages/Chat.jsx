@@ -9,14 +9,6 @@ const Chat = () => {
   const [error, setError] = useState('');
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    fetchChatHistory();
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -33,6 +25,16 @@ const Chat = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // The initial request synchronizes component state with the API.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchChatHistory();
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = async (messageText) => {
     if (!messageText.trim()) return;

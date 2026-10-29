@@ -1,6 +1,7 @@
 // backend/controllers/authController.js
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { getDemoUser, isDemoMode } from '../data/demoData.js';
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -9,6 +10,15 @@ const generateToken = (userId) => {
 export const register = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (isDemoMode()) {
+      const user = getDemoUser();
+      return res.status(201).json({
+        _id: user._id,
+        email: email || user.email,
+        token: 'demo-token'
+      });
+    }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -30,6 +40,15 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (isDemoMode()) {
+      const user = getDemoUser();
+      return res.json({
+        _id: user._id,
+        email: email || user.email,
+        token: 'demo-token'
+      });
+    }
 
     const user = await User.findOne({ email });
     if (!user || !(await user.comparePassword(password))) {
